@@ -1,5 +1,5 @@
 click
-Flask
+Flask[async]
 Flask-Cors
 fpdf
 gunicorn
