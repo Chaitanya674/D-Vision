@@ -15,17 +15,16 @@ from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app)
-app.config["UPLOAD_FOLDER1"]="./static"
+app.config["STATIC_FOLDER"]="./static"
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
 @app.route('/upload-csv', methods=['POST'])
 async def upload_csv():
     pdf_path = './static/example.pdf'
-    dir_path = './static'
-    if os.path.exists(pdf_path) and os.path.exists(dir_path):
+    dir_path = os.path.exists('./static/plots')
+    if os.path.exists(pdf_path):
         os.remove("./static/example.pdf")
-    else:
-        os.mkdir('./static')
+    if not dir_path:
         os.mkdir('./static/plots')
     if 'file' not in request.files:
         print('file not found')
