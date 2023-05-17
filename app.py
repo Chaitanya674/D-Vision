@@ -21,7 +21,8 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 @app.route('/upload-csv', methods=['POST'])
 async def upload_csv():
     pdf_path = './static/example.pdf'
-    if os.path.exists(pdf_path):
+    dir_path = './static'
+    if os.path.exists(pdf_path) and os.path.exists(dir_path):
         os.remove("./static/example.pdf")
     else:
         os.mkdir('./static')
