@@ -23,6 +23,9 @@ async def upload_csv():
     pdf_path = './static/example.pdf'
     if os.path.exists(pdf_path):
         os.remove("./static/example.pdf")
+    else:
+        os.mkdir('./static')
+        os.mkdir('./static/plots')
     if 'file' not in request.files:
         print('file not found')
         return jsonify({'message': 'No file part in the request'}), 400
