@@ -14,6 +14,7 @@ from flask import Flask, request , send_from_directory , jsonify
 from werkzeug.utils import secure_filename
 from flask_cors import CORS
 
+#starting the Flask
 app = Flask(__name__)
 CORS(app)
 app.config["STATIC_FOLDER"]="./static"
