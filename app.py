@@ -1,15 +1,13 @@
 import pandas as pd
 from fpdf import FPDF
 import matplotlib
-matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import seaborn as sns
-import asyncio
 from datetime import date
 import os
 import io
-import math 
-from flask import Flask, request , send_from_directory , jsonify
+import math
+from flask import Flask, request, send_from_directory, jsonify
 from werkzeug.utils import secure_filename
 from flask_cors import CORS
 
