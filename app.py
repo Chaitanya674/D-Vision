@@ -25,27 +25,28 @@ async def upload_csv():
     pdf_path = './static/example.pdf'
     dir_path = os.path.exists('./static/plots')
     if os.path.exists(pdf_path):
-        os.remove(pdf_path)
+        os.remove("./static/example.pdf")
     if not dir_path:
         os.mkdir('./static/plots')
-    
     if 'file' not in request.files:
+        print('file not found')
         return jsonify({'message': 'No file part in the request'}), 400
-
     file = request.files['file']
     if file.filename == '':
         return jsonify({'message': 'No file selected for uploading'}), 400
-
     filename = secure_filename(file.filename)
-    file_path = os.path.join('./static', filename)
-    file.save(file_path)
-    
-    data = pd.read_csv(file_path)
-    os.remove(file_path)  # Remove the uploaded file to save space
-
-    pdf = FileMaker(filename, data)
-    
-    return 'Done', 200
+    print("done save")
+    file.save(os.path.join('./static/' + filename))
+    data = pd.read_csv(os.path.join('./static/' + filename))
+    df = pd.DataFrame(data)
+    loop = asyncio.get_event_loop()
+    await loop.run_in_executor(None, File_maker, filename, df)
+    folder_path = './static/plots/' 
+    for filenames in os.listdir(folder_path):
+        files_path = os.path.join(folder_path, filenames)
+        os.remove(files_path)
+    os.remove(os.path.join('./static/' + filename))
+    return 'message' , 200
 
 
 @app.route('/pdf', methods=['GET'])
