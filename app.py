@@ -22,31 +22,63 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
 @app.route('/upload-csv', methods=['POST'])
 async def upload_csv():
+    # Define the path for the generated PDF
     pdf_path = './static/example.pdf'
+
+    # Check if the 'plots' directory already exists
     dir_path = os.path.exists('./static/plots')
+
+    # If a PDF file already exists, remove it
     if os.path.exists(pdf_path):
         os.remove("./static/example.pdf")
+
+    # If the 'plots' directory does not exist, create it
     if not dir_path:
         os.mkdir('./static/plots')
+
+    # Check if the 'file' part is in the request
     if 'file' not in request.files:
         print('file not found')
         return jsonify({'message': 'No file part in the request'}), 400
+
+    # Get the file from the request
     file = request.files['file']
+
+    # If the uploaded file has no filename, return an error response
     if file.filename == '':
         return jsonify({'message': 'No file selected for uploading'}), 400
+
+    # Secure the filename to prevent security risks
     filename = secure_filename(file.filename)
     print("done save")
+
+    # Save the uploaded file to the 'static' directory with its original name
     file.save(os.path.join('./static/' + filename))
+
+    # Read the data from the CSV file into a Pandas DataFrame
     data = pd.read_csv(os.path.join('./static/' + filename))
     df = pd.DataFrame(data)
+
+    # Get the event loop for asynchronous processing
     loop = asyncio.get_event_loop()
+
+    # Call the File_maker function asynchronously
     await loop.run_in_executor(None, File_maker, filename, df)
+
+    # Define the path to the 'plots' directory
     folder_path = './static/plots/' 
+
+    # Remove all files in the 'plots' directory
     for filenames in os.listdir(folder_path):
         files_path = os.path.join(folder_path, filenames)
         os.remove(files_path)
+
+    # Remove the original CSV file
     os.remove(os.path.join('./static/' + filename))
+
+    # Return a success message with a status code of 200
     return 'message' , 200
+
 
 
 @app.route('/pdf', methods=['GET'])
